@@ -2,6 +2,10 @@
 
 import { Receipt, ShieldAlert, Sparkles } from 'lucide-react';
 import { useDashboardSandbox } from '@/hooks/useDashboardSandbox';
+import { Container } from '@/components/layout/container';
+import { SectionHeading } from '@/components/ui/section-heading';
+import { GlassCard } from '@/components/ui/glass-card';
+import { Button } from '@/components/ui/button';
 
 export default function DashboardSandbox() {
   const { spendingTotal, wellnessScore, logs, simulateSpending, resetSpending } =
@@ -15,21 +19,15 @@ export default function DashboardSandbox() {
       className="py-16 md:py-24 bg-surface text-on-surface text-center"
       id="portfolio_demo"
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-12">
+      <Container className="space-y-12">
 
-        <div className="space-y-4 max-w-3xl mx-auto">
-          <span className="text-xs font-bold text-tertiary uppercase tracking-widest block">
-            TACO EXPERIENCE
-          </span>
-          <h2 className="font-serif text-3xl md:text-5xl text-primary font-semibold leading-tight">
-            Financial Zen in Every Pixel
-          </h2>
-          <p className="font-sans text-on-surface/70 max-w-2xl mx-auto text-base">
-            A dashboard designed not just for complex audits, but for ultimate peace of mind. Play
-            with interactive sandboxes to experience tactile controls and responsive immunity
-            scores.
-          </p>
-        </div>
+        <SectionHeading
+          eyebrow="TACO EXPERIENCE"
+          title="Financial Zen in Every Pixel"
+          description="A dashboard designed not just for complex audits, but for ultimate peace of mind. Play with interactive sandboxes to experience tactile controls and responsive immunity scores."
+          align="center"
+          className="max-w-3xl mx-auto"
+        />
 
         <div className="relative bg-primary-container rounded-[2rem] p-4 sm:p-8 lg:p-14 overflow-hidden shadow-2xl border border-primary/20">
           <div className="absolute top-0 right-0 w-80 h-80 bg-tertiary/10 rounded-full blur-[90px]" />
@@ -51,7 +49,7 @@ export default function DashboardSandbox() {
             <div className="lg:col-span-4 space-y-6 flex flex-col justify-center">
 
               {/* Simulated Expense */}
-              <div className="glass-card p-5 rounded-2xl border-white/40 shadow-2xl text-left w-full mx-auto backdrop-blur-md">
+              <GlassCard padding="md" rounded="xl" className="text-left w-full mx-auto">
                 <div className="flex items-center justify-between mb-2">
                   <p className="font-sans text-xs font-bold text-[#003527]/70 uppercase tracking-widest">
                     Simulated Expense
@@ -65,10 +63,10 @@ export default function DashboardSandbox() {
                   <ShieldAlert className="w-3.5 h-3.5" />
                   <span>{driftPercent}% higher than cumulative May</span>
                 </div>
-              </div>
+              </GlassCard>
 
               {/* Financial Immunity Index */}
-              <div className="glass-card p-5 rounded-2xl border-white/40 shadow-2xl text-left w-full mx-auto backdrop-blur-md">
+              <GlassCard padding="md" rounded="xl" className="text-left w-full mx-auto">
                 <div className="flex items-center justify-between mb-2">
                   <p className="font-sans text-xs font-bold text-[#003527]/70 uppercase tracking-widest">
                     Financial Immunity index
@@ -100,7 +98,7 @@ export default function DashboardSandbox() {
                     ? '✓ Excellent Financial Immunity Safeguard'
                     : '⚠️ Moderate Budget Drift Detected'}
                 </div>
-              </div>
+              </GlassCard>
 
             </div>
           </div>
@@ -119,18 +117,22 @@ export default function DashboardSandbox() {
             </p>
           </div>
           <div className="flex gap-2.5 shrink-0">
-            <button
+            <Button
               onClick={simulateSpending}
-              className="bg-primary text-white font-sans text-xs font-bold uppercase tracking-wider px-5 py-3 rounded-lg hover:bg-primary-container transition active:scale-95 duration-150 shadow-md"
+              variant="primary"
+              size="sm"
+              className="px-5 py-3"
             >
               Spend ₹1,500
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={resetSpending}
-              className="bg-white text-primary border border-primary/20 font-sans text-xs font-bold uppercase tracking-wider px-4 py-3 rounded-lg hover:bg-surface-low transition active:scale-95 duration-150"
+              variant="secondary"
+              size="sm"
+              className="px-4 py-3"
             >
               Reset Sandbox
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -152,7 +154,7 @@ export default function DashboardSandbox() {
           </div>
         )}
 
-      </div>
+      </Container>
     </section>
   );
 }

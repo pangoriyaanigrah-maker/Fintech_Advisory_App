@@ -3,8 +3,12 @@
 import { useMemo } from 'react';
 import { Calculator, Sparkles } from 'lucide-react';
 import { useSIPCalculator } from '@/hooks/useSIPCalculator';
+import { Container } from '@/components/layout/container';
+import { SectionHeading } from '@/components/ui/section-heading';
+import { GlassCard } from '@/components/ui/glass-card';
+import { Button } from '@/components/ui/button';
 
-export default function SIPCalculator() {
+export default function SIPCalculator({ embedded = false }: { embedded?: boolean }) {
   const { amount, tenure, rate, setAmount, setTenure, setRate, result } = useSIPCalculator();
 
   const { futureValue, totalInvested, wealthGained, steps } = result;
@@ -59,31 +63,21 @@ export default function SIPCalculator() {
     );
   }
 
-  return (
-    <section
-      className="py-16 md:py-24 bg-surface-low overflow-hidden grain-texture"
-      id="academy"
-    >
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-
-        <div className="text-center mb-12 space-y-4">
-          <span className="text-xs font-bold text-tertiary uppercase tracking-widest block">
-            PASSIVE WELLNESS TOOLS
-          </span>
-          <h2 className="font-serif text-3xl md:text-5xl text-primary font-bold leading-tight">
-            Visualize Your Compound Growth Strategy
-          </h2>
-          <p className="font-sans text-on-surface/70 max-w-2xl mx-auto text-base">
-            Control investment weights, rates, and time matrices to project active capital
-            compounding gains directly.
-          </p>
-        </div>
+  const innerContent = (
+    <>
+      <SectionHeading
+        eyebrow="PASSIVE WELLNESS TOOLS"
+        title="Visualize Your Compound Growth Strategy"
+        description="Control investment weights, rates, and time matrices to project active capital compounding gains directly."
+        align="center"
+        className="mb-12"
+      />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
           {/* Left: SVG chart + metrics */}
           <div className="lg:col-span-6 relative">
-            <div className="glass-card p-6 md:p-8 rounded-[2.5rem] shadow-2xl border border-white/50 backdrop-blur-3xl space-y-6">
+            <GlassCard padding="lg" rounded="3xl" className="space-y-6">
 
               <div className="flex justify-between items-center border-b border-primary/5 pb-4">
                 <div className="flex items-center gap-3 text-left">
@@ -183,7 +177,7 @@ export default function SIPCalculator() {
                 </div>
               </div>
 
-            </div>
+            </GlassCard>
           </div>
 
           {/* Right: sliders */}
@@ -278,17 +272,33 @@ export default function SIPCalculator() {
               </p>
             </div>
 
-            <button
+            <Button
               onClick={handleAnalyze}
-              className="w-full bg-primary text-white py-4 rounded-xl font-sans text-sm font-bold uppercase tracking-widest hover:bg-primary-container transition active:scale-[0.99] duration-150 shadow-xl cursor-pointer text-center"
+              variant="primary"
+              size="lg"
+              fullWidth
             >
               Analyze Trajectory
-            </button>
+            </Button>
 
           </div>
 
         </div>
-      </div>
+    </>
+  );
+
+  if (embedded) {
+    return <div>{innerContent}</div>;
+  }
+
+  return (
+    <section
+      className="py-16 md:py-24 bg-surface-low overflow-hidden grain-texture"
+      id="academy"
+    >
+      <Container>
+        {innerContent}
+      </Container>
     </section>
   );
 }

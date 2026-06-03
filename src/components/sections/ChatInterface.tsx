@@ -4,8 +4,9 @@ import { useEffect, useRef } from 'react';
 import { CheckCircle2, RefreshCw, Send, Sparkles } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
 import { PREDEFINED_QUESTIONS } from '@/lib/data/chat';
+import { Container } from '@/components/layout/container';
 
-export default function ChatInterface() {
+export default function ChatInterface({ embedded = false }: { embedded?: boolean }) {
   const { messages, inputValue, setInputValue, sendMessage, clearChat, isTyping } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -19,52 +20,8 @@ export default function ChatInterface() {
     }
   }
 
-  return (
-    <section
-      className="py-16 md:py-24 bg-surface-low grain-texture overflow-hidden"
-      id="wellness"
-    >
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-
-          {/* Left: feature description */}
-          <div className="lg:col-span-6 space-y-7 text-left">
-            <span className="font-sans text-xs font-bold text-tertiary uppercase tracking-widest block">
-              AI CONCIERGE CHAT
-            </span>
-            <h2 className="font-serif text-3xl md:text-5xl text-primary font-bold leading-tight">
-              Your Custom Digital Financial Muse
-            </h2>
-            <p className="font-sans text-on-surface/70 text-base leading-relaxed max-w-lg">
-              Unlock prompt, objective responses to your portfolios, SIP schedules, and SEBI
-              compliance regulations through active conversational intelligence.
-            </p>
-
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-tertiary-container shrink-0 mt-0.5" />
-                <p className="text-on-surface/70 text-sm font-medium">
-                  24/7 personal direct secure messaging framework.
-                </p>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-tertiary-container shrink-0 mt-0.5" />
-                <p className="text-on-surface/70 text-sm font-medium">
-                  Automatic index balancing analyses and tax calculations.
-                </p>
-              </li>
-              <li className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-tertiary-container shrink-0 mt-0.5" />
-                <p className="text-on-surface/70 text-sm font-medium">
-                  Deep structural support engineered specifically for modern Indian life scenarios.
-                </p>
-              </li>
-            </ul>
-          </div>
-
-          {/* Right: chat UI */}
-          <div className="lg:col-span-6">
-            <div className="bg-[#0A261D] text-white rounded-3xl overflow-hidden shadow-2xl border border-white/5 flex flex-col h-[500px] relative max-w-md mx-auto">
+  const chatPanel = (
+    <div className={`bg-[#0A261D] text-white rounded-3xl overflow-hidden shadow-2xl border border-white/5 flex flex-col relative ${embedded ? 'h-[calc(100vh-220px)]' : 'h-[500px]'} ${embedded ? 'max-w-2xl mx-auto' : 'max-w-md mx-auto'}`}>
 
               {/* Ambient light */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-tertiary-container/10 rounded-full blur-2xl pointer-events-none" />
@@ -167,11 +124,67 @@ export default function ChatInterface() {
                 </button>
               </div>
 
-            </div>
+    </div>
+  );
+
+  if (embedded) {
+    return (
+      <div id="wellness">
+        {chatPanel}
+      </div>
+    );
+  }
+
+  return (
+    <section
+      className="py-16 md:py-24 bg-surface-low grain-texture overflow-hidden"
+      id="wellness"
+    >
+      <Container>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+          {/* Left: feature description */}
+          <div className="lg:col-span-6 space-y-7 text-left">
+            <span className="font-sans text-xs font-bold text-tertiary uppercase tracking-widest block">
+              AI CONCIERGE CHAT
+            </span>
+            <h2 className="font-serif text-3xl md:text-5xl text-primary font-bold leading-tight">
+              Your Custom Digital Financial Muse
+            </h2>
+            <p className="font-sans text-on-surface/70 text-base leading-relaxed max-w-lg">
+              Unlock prompt, objective responses to your portfolios, SIP schedules, and SEBI
+              compliance regulations through active conversational intelligence.
+            </p>
+
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-tertiary-container shrink-0 mt-0.5" />
+                <p className="text-on-surface/70 text-sm font-medium">
+                  24/7 personal direct secure messaging framework.
+                </p>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-tertiary-container shrink-0 mt-0.5" />
+                <p className="text-on-surface/70 text-sm font-medium">
+                  Automatic index balancing analyses and tax calculations.
+                </p>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-tertiary-container shrink-0 mt-0.5" />
+                <p className="text-on-surface/70 text-sm font-medium">
+                  Deep structural support engineered specifically for modern Indian life scenarios.
+                </p>
+              </li>
+            </ul>
+          </div>
+
+          {/* Right: chat UI */}
+          <div className="lg:col-span-6">
+            {chatPanel}
           </div>
 
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

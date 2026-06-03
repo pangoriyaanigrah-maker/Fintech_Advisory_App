@@ -1,24 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, Sparkles, X } from 'lucide-react';
 import { useNavbarScroll } from '@/hooks/useNavbarScroll';
+import { useIsMobileMenuOpen, useToggleMobileMenu, useCloseMobileMenu } from '@/stores/ui-store';
+import { Container } from '@/components/layout/container';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils/cn';
 
 const navLinks = [
-  { href: '#portfolio', label: 'Portfolio' },
-  { href: '#advisor', label: 'Companion' },
-  { href: '#portfolio_demo', label: 'Sandbox' },
-  { href: '#goals', label: 'Milestones' },
-  { href: '#wellness', label: 'Aura Chat' },
-  { href: '#academy', label: 'SIP & Learn' },
+  { href: '/#portfolio',  label: 'Portfolio' },
+  { href: '/#advisor',    label: 'Advisor' },
+  { href: '/#features',   label: 'Features' },
+  { href: '/dashboard',   label: 'Dashboard' },
+  { href: '/assistant',   label: 'Aura Chat' },
 ];
 
 export default function Navbar() {
   const { isScrolled } = useNavbarScroll();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isMobileMenuOpen = useIsMobileMenuOpen();
+  const toggleMobileMenu = useToggleMobileMenu();
+  const closeMobileMenu = useCloseMobileMenu();
+  const pathname = usePathname();
 
-  function toggleMobileMenu() {
-    setIsMenuOpen((prev) => !prev);
+  function isLinkActive(href: string) {
+    if (href.startsWith('/#')) {
+      return pathname === '/';
+    }
+    return pathname === href;
   }
 
   return (
@@ -29,36 +39,41 @@ export default function Navbar() {
           : 'border-transparent bg-surface/80'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+      <Container className="h-20 flex items-center justify-between">
         {/* Brand Logo */}
-        <a href="#portfolio" className="flex items-center gap-2.5">
+        <Link href="/#portfolio" className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/15">
             <Sparkles className="w-4 h-4 text-tertiary-container" />
           </div>
           <span className="font-serif text-2xl font-black text-primary tracking-tight">Aarya</span>
-        </a>
+        </Link>
 
         {/* Desktop Links */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
-              className="text-xs font-bold uppercase tracking-widest text-[#003527]/70 hover:text-primary transition-colors"
+              className={cn(
+                'text-xs font-bold uppercase tracking-widest transition-colors',
+                isLinkActive(link.href)
+                  ? 'text-primary'
+                  : 'text-[#003527]/70 hover:text-primary'
+              )}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-4">
-          <a
-            href="#wellness"
-            className="text-xs bg-primary text-white border border-[#064e3b] px-5 py-2.5 rounded-lg font-bold uppercase tracking-wider hover:bg-primary-container transition-all active:scale-[0.98]"
+          <Link
+            href="/assistant"
+            className={cn(buttonVariants({ variant: 'primary', size: 'sm' }), 'border border-[#064e3b]')}
           >
             Open Chat
-          </a>
+          </Link>
         </div>
 
         {/* Hamburger Button (Mobile) */}
@@ -67,30 +82,33 @@ export default function Navbar() {
           onClick={toggleMobileMenu}
           aria-label="Toggle Mobile Menu"
         >
-          {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
-      </div>
+      </Container>
 
       {/* Mobile Drawer */}
-      {isMenuOpen && (
+      {isMobileMenuOpen && (
         <div className="fixed top-20 left-0 w-full bg-surface-low border-b border-primary/5 shadow-xl flex flex-col p-6 space-y-4 z-40 transition-all duration-300">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
-              onClick={toggleMobileMenu}
-              className="text-sm font-bold uppercase tracking-wider text-primary py-2 border-b border-primary/5"
+              onClick={closeMobileMenu}
+              className={cn(
+                'text-sm font-bold uppercase tracking-wider py-2 border-b border-primary/5',
+                isLinkActive(link.href) ? 'text-primary' : 'text-primary/70'
+              )}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-          <a
-            href="#wellness"
-            onClick={toggleMobileMenu}
+          <Link
+            href="/assistant"
+            onClick={closeMobileMenu}
             className="w-full text-center bg-primary text-white py-3 rounded-lg font-bold text-xs uppercase tracking-wider"
           >
             Start Aura Concierge
-          </a>
+          </Link>
         </div>
       )}
     </header>

@@ -4,6 +4,10 @@ import { useState } from 'react';
 import { ArrowUpRight, Award, Bell, Sparkles } from 'lucide-react';
 import type { AdvisorTab } from '@/types';
 import { advisorScenarios } from '@/lib/data/advisor';
+import { Container } from '@/components/layout/container';
+import { SectionHeading } from '@/components/ui/section-heading';
+import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils/cn';
 
 export default function Advisor() {
   const [activeTab, setActiveTab] = useState<AdvisorTab>('surplus');
@@ -28,7 +32,7 @@ export default function Advisor() {
 
   return (
     <section className="py-16 md:py-24 bg-surface-low overflow-hidden grain-texture" id="advisor">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <Container>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 
           {/* Column A: Circular advisor image */}
@@ -55,18 +59,12 @@ export default function Advisor() {
 
           {/* Column B: Tabs + content */}
           <div className="lg:col-span-7 space-y-7 text-left order-1 lg:order-2">
-            <div className="space-y-3">
-              <span className="font-sans text-xs font-bold text-tertiary uppercase tracking-widest block">
-                AI Companion
-              </span>
-              <h2 className="font-serif text-3xl md:text-4xl text-primary leading-tight font-bold">
-                Your Strategic Advisor Focus
-              </h2>
-              <p className="font-sans text-on-surface/70 text-base leading-relaxed">
-                Aarya processes local trends and investment parameters in clear warmth, shifting your
-                strategic capital layout toward modern efficiency.
-              </p>
-            </div>
+            <SectionHeading
+              eyebrow="AI Companion"
+              title="Your Strategic Advisor Focus"
+              description="Aarya processes local trends and investment parameters in clear warmth, shifting your strategic capital layout toward modern efficiency."
+              spacing="sm"
+            />
 
             {/* Tabs */}
             <div className="flex border-b border-primary/10">
@@ -86,15 +84,16 @@ export default function Advisor() {
             </div>
 
             {/* Quote box */}
-            <div className="p-6 bg-surface-lowest rounded-3xl shadow-sm border border-primary/5 relative space-y-4">
+            <Card variant="default" padding="lg" className="relative space-y-4">
               <div className="absolute top-4 right-4 text-tertiary-container/40">
                 <Sparkles className="w-8 h-8" />
               </div>
 
               <p
-                className={`font-sans text-lg italic text-primary leading-relaxed transition-opacity duration-200 ${
+                className={cn(
+                  'font-sans text-lg italic text-primary leading-relaxed transition-opacity duration-200',
                   quoteVisible ? 'opacity-100' : 'opacity-0'
-                }`}
+                )}
               >
                 &ldquo;{data.quote}&rdquo;
               </p>
@@ -103,11 +102,11 @@ export default function Advisor() {
                 <ArrowUpRight className="w-4 h-4 text-primary shrink-0" />
                 <span>{data.projection}</span>
               </div>
-            </div>
+            </Card>
 
             {/* Alert cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-5 bg-surface-lowest rounded-2xl shadow-sm border border-primary/5 flex items-start gap-3.5 hover:scale-[1.01] transition-transform duration-200">
+              <Card variant="default" padding="md" hoverable className="flex items-start gap-3.5">
                 <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary shrink-0">
                   <Bell className="w-5 h-5" />
                 </div>
@@ -115,9 +114,9 @@ export default function Advisor() {
                   <h4 className="font-sans text-sm font-semibold text-primary">Priority Alert</h4>
                   <p className="text-xs text-on-surface/70 mt-1.5 leading-relaxed">{data.alert1}</p>
                 </div>
-              </div>
+              </Card>
 
-              <div className="p-5 bg-surface-lowest rounded-2xl shadow-sm border border-primary/5 flex items-start gap-3.5 hover:scale-[1.01] transition-transform duration-200">
+              <Card variant="default" padding="md" hoverable className="flex items-start gap-3.5">
                 <div className="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary shrink-0">
                   <Award className="w-5 h-5" />
                 </div>
@@ -125,13 +124,13 @@ export default function Advisor() {
                   <h4 className="font-sans text-sm font-semibold text-primary">Wellness Booster</h4>
                   <p className="text-xs text-on-surface/70 mt-1.5 leading-relaxed">{data.alert2}</p>
                 </div>
-              </div>
+              </Card>
             </div>
 
           </div>
 
         </div>
-      </div>
+      </Container>
     </section>
   );
 }

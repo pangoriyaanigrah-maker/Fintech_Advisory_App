@@ -1,36 +1,41 @@
 'use client';
 
-import { useState } from 'react';
-import { Award, BookOpen, CheckCircle2, Clock, Sparkles, X } from 'lucide-react';
+import { Award, BookOpen, CheckCircle2, Clock } from 'lucide-react';
 import type { CourseId } from '@/types';
 import { courseSyllabusData } from '@/lib/data/courses';
+import { useActiveModal, useModalPayload, useOpenModal, useCloseModal } from '@/stores/modal-store';
+import { Container } from '@/components/layout/container';
+import { SectionHeading } from '@/components/ui/section-heading';
+import { Modal } from '@/components/ui/modal';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default function LearningModules() {
-  const [articleModalOpen, setArticleModalOpen] = useState(false);
-  const [activeCourse, setActiveCourse] = useState<CourseId | null>(null);
+  const activeModal = useActiveModal();
+  const payload = useModalPayload();
+  const openModal = useOpenModal();
+  const closeModal = useCloseModal();
 
-  function openSyllabusModal(id: CourseId) {
-    setActiveCourse(id);
-  }
-
-  function closeSyllabusModal() {
-    setActiveCourse(null);
-  }
+  const articleModalOpen = activeModal === 'article';
+  const syllabusModalOpen = activeModal === 'syllabus';
+  const activeCourse = syllabusModalOpen ? (payload.courseId as CourseId | undefined) : undefined;
 
   const courseData = activeCourse ? courseSyllabusData[activeCourse] : null;
 
+  function openSyllabusModal(id: CourseId) {
+    openModal('syllabus', { courseId: id });
+  }
+
   return (
     <section className="py-16 md:py-24 bg-surface-highest grain-texture" id="academy_books">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+      <Container>
 
-        <div className="mb-12 text-left space-y-2">
-          <span className="text-xs font-bold text-tertiary uppercase tracking-widest block">
-            FINANCIAL ACADEMIA
-          </span>
-          <h2 className="font-serif text-3xl md:text-5xl text-primary font-bold leading-tight">
-            Objective Learning Modules
-          </h2>
-        </div>
+        <SectionHeading
+          eyebrow="FINANCIAL ACADEMIA"
+          title="Objective Learning Modules"
+          spacing="sm"
+          className="mb-12"
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
 
@@ -59,7 +64,7 @@ export default function LearningModules() {
                   the modern Indian woman. High yield accounts are the new zen.
                 </p>
                 <button
-                  onClick={() => setArticleModalOpen(true)}
+                  onClick={() => openModal('article')}
                   className="text-primary font-sans text-xs font-bold flex items-center gap-2 group-hover:gap-3 transition-all cursor-pointer focus:outline-none"
                 >
                   Read Full Article &rarr;
@@ -72,9 +77,11 @@ export default function LearningModules() {
           {/* Course cards */}
           <div className="lg:col-span-5 grid grid-cols-1 gap-4 text-left">
 
-            <div
+            <Card
+              variant="default"
+              padding="lg"
               onClick={() => openSyllabusModal('mutual')}
-              className="p-6 bg-surface-lowest rounded-3xl border border-primary/5 shadow-sm hover:shadow-md cursor-pointer transition-all flex items-start gap-5"
+              className="cursor-pointer hover:shadow-md flex items-start gap-5"
             >
               <div className="p-3.5 bg-primary/5 rounded-2xl shrink-0 text-primary">
                 <BookOpen className="w-6 h-6" />
@@ -88,11 +95,13 @@ export default function LearningModules() {
                   Demystifying compounding, direct fees, and tax shields in Indian markets.
                 </p>
               </div>
-            </div>
+            </Card>
 
-            <div
+            <Card
+              variant="default"
+              padding="lg"
               onClick={() => openSyllabusModal('estate')}
-              className="p-6 bg-surface-lowest rounded-3xl border border-primary/5 shadow-sm hover:shadow-md cursor-pointer transition-all flex items-start gap-5"
+              className="cursor-pointer hover:shadow-md flex items-start gap-5"
             >
               <div className="p-3.5 bg-primary/5 rounded-2xl shrink-0 text-primary">
                 <Award className="w-6 h-6" />
@@ -108,11 +117,13 @@ export default function LearningModules() {
                   Safeguarding legacy assets, nominations, and writing airtight legal Wills.
                 </p>
               </div>
-            </div>
+            </Card>
 
-            <div
+            <Card
+              variant="default"
+              padding="lg"
               onClick={() => openSyllabusModal('insurance')}
-              className="p-6 bg-surface-lowest rounded-3xl border border-primary/5 shadow-sm hover:shadow-md cursor-pointer transition-all flex items-start gap-5"
+              className="cursor-pointer hover:shadow-md flex items-start gap-5"
             >
               <div className="p-3.5 bg-primary/5 rounded-2xl shrink-0 text-primary">
                 <Clock className="w-6 h-6" />
@@ -126,98 +137,86 @@ export default function LearningModules() {
                   Differentiating term vs endowments and evaluating safe co-payment limits.
                 </p>
               </div>
-            </div>
+            </Card>
 
           </div>
 
         </div>
 
-      </div>
+      </Container>
 
       {/* Article modal */}
-      {articleModalOpen && (
-        <div className="fixed inset-0 bg-primary/40 backdrop-blur-md flex items-center justify-center z-50 p-6">
-          <div className="bg-surface-lowest rounded-[2.5rem] max-w-2xl w-full p-6 sm:p-10 shadow-2xl relative border border-primary/5 max-h-[90vh] overflow-y-auto text-left">
+      <Modal
+        isOpen={articleModalOpen}
+        onClose={closeModal}
+        size="lg"
+      >
+        <span className="text-[10px] font-bold text-tertiary uppercase tracking-widest block mb-1">
+          Wellness Hub Editorials
+        </span>
+        <h3 className="font-serif text-3xl font-extrabold text-primary leading-tight mb-4">
+          Investing as Self-Care: The New Paradigm
+        </h3>
 
-            <button
-              onClick={() => setArticleModalOpen(false)}
-              className="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-low text-primary transition-colors focus:outline-none"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <span className="text-[10px] font-bold text-tertiary uppercase tracking-widest block mb-1">
-              Wellness Hub Editorials
-            </span>
-            <h3 className="font-serif text-3xl font-extrabold text-primary leading-tight mb-4">
-              Investing as Self-Care: The New Paradigm
-            </h3>
-
-            <div className="space-y-4 text-xs font-sans text-on-surface/80 leading-relaxed mt-4 border-t border-primary/5 pt-4">
-              <p>
-                For generations, the cultural script around self-care for Indian women has been
-                dominated by superficial practices—unnecessary retail splurges or expensive weekend
-                spa getaways. While these provide brief immediate dopamine rushes, they rarely
-                deliver long-term peace of mind.
-              </p>
-              <p>
-                Here is the truth: Wellness is not just spiritual hygiene or physical pampering;{' '}
-                <strong>wellness is financial agency</strong>. The ultimate act of continuous
-                self-care is moving structural assets into direct, high-capacity compounding
-                instruments that buy you future time, decision buffers, and absolute independence.
-              </p>
-              <p className="italic text-primary border-l-4 border-tertiary-container/60 pl-3">
-                &ldquo;When you automate a direct SIP index fund, you do not just acquire mutual share
-                units; you buy the agency to say &lsquo;No&rsquo; to compromised conditions, bad workplace
-                scripts, or outdated cultural compromises.&rdquo;
-              </p>
-              <p>Our recommendation heuristics are built around these parameters:</p>
-              <ul className="list-disc pl-5 space-y-2">
-                <li>
-                  <strong>Direct Equity Indexing:</strong> For asset security and compound safety
-                  margins.
-                </li>
-                <li>
-                  <strong>Tax Shield Minimization:</strong> Utilizing ELSS to safeguard dynamic
-                  income flows legally.
-                </li>
-                <li>
-                  <strong>Zero Agency Drag:</strong> Choosing direct mutual funds over regular ones
-                  to eliminate silent fees.
-                </li>
-              </ul>
-              <p>
-                True peace of mind is taking deliberate power over your compounding metrics. Start
-                treating your investment portfolio not as a dry ledger, but as the primary sanctuary
-                layout of your ultimate lifestyle.
-              </p>
-            </div>
-
-            <div className="pt-6 border-t border-primary/5 mt-6 flex justify-end">
-              <button
-                onClick={() => setArticleModalOpen(false)}
-                className="bg-primary text-white py-3 px-6 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-primary-container"
-              >
-                Acknowledge &amp; Close
-              </button>
-            </div>
-
-          </div>
+        <div className="space-y-4 text-xs font-sans text-on-surface/80 leading-relaxed mt-4 border-t border-primary/5 pt-4">
+          <p>
+            For generations, the cultural script around self-care for Indian women has been
+            dominated by superficial practices—unnecessary retail splurges or expensive weekend
+            spa getaways. While these provide brief immediate dopamine rushes, they rarely
+            deliver long-term peace of mind.
+          </p>
+          <p>
+            Here is the truth: Wellness is not just spiritual hygiene or physical pampering;{' '}
+            <strong>wellness is financial agency</strong>. The ultimate act of continuous
+            self-care is moving structural assets into direct, high-capacity compounding
+            instruments that buy you future time, decision buffers, and absolute independence.
+          </p>
+          <p className="italic text-primary border-l-4 border-tertiary-container/60 pl-3">
+            &ldquo;When you automate a direct SIP index fund, you do not just acquire mutual share
+            units; you buy the agency to say &lsquo;No&rsquo; to compromised conditions, bad workplace
+            scripts, or outdated cultural compromises.&rdquo;
+          </p>
+          <p>Our recommendation heuristics are built around these parameters:</p>
+          <ul className="list-disc pl-5 space-y-2">
+            <li>
+              <strong>Direct Equity Indexing:</strong> For asset security and compound safety
+              margins.
+            </li>
+            <li>
+              <strong>Tax Shield Minimization:</strong> Utilizing ELSS to safeguard dynamic
+              income flows legally.
+            </li>
+            <li>
+              <strong>Zero Agency Drag:</strong> Choosing direct mutual funds over regular ones
+              to eliminate silent fees.
+            </li>
+          </ul>
+          <p>
+            True peace of mind is taking deliberate power over your compounding metrics. Start
+            treating your investment portfolio not as a dry ledger, but as the primary sanctuary
+            layout of your ultimate lifestyle.
+          </p>
         </div>
-      )}
+
+        <div className="pt-6 border-t border-primary/5 mt-6 flex justify-end">
+          <Button
+            onClick={closeModal}
+            variant="primary"
+            size="md"
+          >
+            Acknowledge &amp; Close
+          </Button>
+        </div>
+      </Modal>
 
       {/* Syllabus modal */}
-      {activeCourse && courseData && (
-        <div className="fixed inset-0 bg-primary/40 backdrop-blur-md flex items-center justify-center z-50 p-6">
-          <div className="bg-surface-lowest rounded-[2.5rem] max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-primary/5 text-left">
-
-            <button
-              onClick={closeSyllabusModal}
-              className="absolute top-6 right-6 p-2 rounded-full hover:bg-surface-low text-primary transition-colors focus:outline-none"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
+      <Modal
+        isOpen={syllabusModalOpen && courseData !== null}
+        onClose={closeModal}
+        size="md"
+      >
+        {courseData && (
+          <>
             <span className="text-[9px] font-bold text-tertiary uppercase tracking-widest block mb-1">
               Knowledge Course Curriculum
             </span>
@@ -240,17 +239,17 @@ export default function LearningModules() {
             </div>
 
             <div className="pt-6 border-t border-primary/5 mt-6 flex justify-end">
-              <button
-                onClick={closeSyllabusModal}
-                className="bg-primary text-white px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider"
+              <Button
+                onClick={closeModal}
+                variant="primary"
+                size="sm"
               >
                 Got It
-              </button>
+              </Button>
             </div>
-
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
 
     </section>
   );
