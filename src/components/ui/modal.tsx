@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback, type ReactNode } from 'react'
+import { useEffect, useCallback, useRef, type ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
@@ -22,20 +22,47 @@ const sizeMap = { sm: 'max-w-md', md: 'max-w-lg', lg: 'max-w-2xl', xl: 'max-w-3x
 export function Modal({
   isOpen, onClose, children, title, description, size = 'lg', className, showCloseButton = true,
 }: ModalProps) {
-  const handleEsc = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') onClose()
+  const panelRef = useRef<HTMLDivElement>(null)
+  const previouslyFocused = useRef<HTMLElement | null>(null)
+
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose()
+      return
+    }
+    // Focus trap: keep Tab focus cycling within the dialog.
+    if (e.key === 'Tab' && panelRef.current) {
+      const focusables = panelRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea, input:not([disabled]), select, [tabindex]:not([tabindex="-1"])'
+      )
+      if (focusables.length === 0) return
+      const first = focusables[0]
+      const last = focusables[focusables.length - 1]
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
   }, [onClose])
 
   useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('keydown', handleEsc)
-      document.body.style.overflow = 'hidden'
-    }
+    if (!isOpen) return
+    // Remember what was focused so we can restore it on close.
+    previouslyFocused.current = document.activeElement as HTMLElement | null
+    document.addEventListener('keydown', handleKeyDown)
+    document.body.style.overflow = 'hidden'
+    // Move focus into the dialog after it mounts.
+    const focusTimer = window.setTimeout(() => panelRef.current?.focus(), 0)
     return () => {
-      document.removeEventListener('keydown', handleEsc)
+      window.clearTimeout(focusTimer)
+      document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = ''
+      previouslyFocused.current?.focus?.()
     }
-  }, [isOpen, handleEsc])
+  }, [isOpen, handleKeyDown])
 
   return (
     <AnimatePresence>
@@ -52,8 +79,14 @@ export function Modal({
           />
           {/* Panel */}
           <motion.div
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={title ? 'modal-title' : undefined}
+            aria-label={title ? undefined : 'Dialog'}
+            tabIndex={-1}
             className={cn(
-              'relative w-full bg-surface-lowest rounded-[2.5rem] shadow-2xl border border-primary/5 max-h-[90vh] overflow-y-auto text-left',
+              'relative w-full bg-surface-lowest rounded-[2.5rem] shadow-2xl border border-primary/5 max-h-[90vh] overflow-y-auto text-left focus:outline-none',
               sizeMap[size],
               className
             )}
@@ -74,7 +107,7 @@ export function Modal({
             )}
             {(title || description) && (
               <div className="px-6 sm:px-10 pt-8 pb-0">
-                {title && <h2 className="font-serif text-2xl font-extrabold text-primary">{title}</h2>}
+                {title && <h2 id="modal-title" className="font-serif text-2xl font-extrabold text-primary">{title}</h2>}
                 {description && <p className="text-xs text-on-surface/50 italic font-bold mt-1">{description}</p>}
               </div>
             )}

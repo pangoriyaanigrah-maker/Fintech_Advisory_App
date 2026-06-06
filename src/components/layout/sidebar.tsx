@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, PieChart, Target, Sparkles, Settings } from 'lucide-react'
+import { LayoutDashboard, PieChart, Target, ShieldAlert, Sparkles, Settings } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { useIsSidebarOpen, useCloseSidebar } from '@/stores/ui-store'
 
@@ -10,6 +10,7 @@ const navItems = [
   { href: '/dashboard',  label: 'Overview',   icon: LayoutDashboard },
   { href: '/budgeting',  label: 'Budgeting',  icon: PieChart },
   { href: '/goals',      label: 'Goals',      icon: Target },
+  { href: '/planner',    label: 'SRR Planner', icon: ShieldAlert },
   { href: '/assistant',  label: 'Aura',       icon: Sparkles },
 ]
 

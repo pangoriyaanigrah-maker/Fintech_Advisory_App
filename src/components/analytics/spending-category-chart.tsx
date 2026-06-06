@@ -12,12 +12,14 @@ interface SpendingCategoryChartProps {
 function DonutChart({ essential, nonEssential, total }: { essential: number; nonEssential: number; total: number }) {
   const r = 40
   const circ = 2 * Math.PI * r
-  const essentialPct = essential / total
+  const essentialPct = total > 0 ? essential / total : 0
   const essentialArc = essentialPct * circ
-  const nonEssentialArc = (nonEssential / total) * circ
+  const nonEssentialArc = (total > 0 ? nonEssential / total : 0) * circ
 
   return (
     <svg viewBox="0 0 100 100" className="w-full max-w-[140px] mx-auto">
+      {/* Empty track ring (always visible underneath) */}
+      <circle cx="50" cy="50" r={r} fill="none" stroke="rgba(0,53,39,0.06)" strokeWidth="12" />
       {/* Non-essential (gold) — drawn first (bottom) */}
       <circle cx="50" cy="50" r={r} fill="none" stroke="#cca72f" strokeWidth="12" strokeOpacity="0.9"
         strokeDasharray={`${nonEssentialArc} ${circ}`}
@@ -42,10 +44,22 @@ function DonutChart({ essential, nonEssential, total }: { essential: number; non
 
 export function SpendingCategoryChart({ snapshot, essentialTotal, nonEssentialTotal, className }: SpendingCategoryChartProps) {
   const total = essentialTotal + nonEssentialTotal
-  const essentialPct = Math.round((essentialTotal / total) * 100)
-  const nonEssentialPct = 100 - essentialPct
+  const hasData = total > 0
+  const essentialPct = hasData ? Math.round((essentialTotal / total) * 100) : 0
+  const nonEssentialPct = hasData ? 100 - essentialPct : 0
 
   const topCategories = [...snapshot.categories].sort((a, b) => b.spent - a.spent).slice(0, 5)
+
+  if (!hasData) {
+    return (
+      <div className={cn('space-y-5', className)}>
+        <h4 className="font-serif text-base font-bold text-primary">Spending Breakdown</h4>
+        <p className="text-sm text-on-surface/55 font-sans py-8 text-center">
+          No spending logged yet — add an expense to see your breakdown.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className={cn('space-y-5', className)}>
@@ -68,7 +82,7 @@ export function SpendingCategoryChart({ snapshot, essentialTotal, nonEssentialTo
             <div className="h-full bg-primary transition-all duration-700" style={{ width: `${essentialPct}%` }} />
             <div className="h-full bg-tertiary-container transition-all duration-700" style={{ width: `${nonEssentialPct}%` }} />
           </div>
-          <p className="text-[10px] text-on-surface/50 font-bold uppercase tracking-wider">
+          <p className="text-[11px] text-on-surface/65 font-bold uppercase tracking-wider">
             ₹{essentialTotal.toLocaleString('en-IN')} essential · ₹{nonEssentialTotal.toLocaleString('en-IN')} lifestyle
           </p>
         </div>
@@ -80,14 +94,14 @@ export function SpendingCategoryChart({ snapshot, essentialTotal, nonEssentialTo
           const pct = Math.round((cat.spent / total) * 100)
           return (
             <div key={cat.category} className="flex items-center gap-3">
-              <span className="text-[10px] font-bold text-on-surface/60 w-20 truncate uppercase tracking-wide">{cat.label}</span>
+              <span className="text-[11px] font-bold text-on-surface/60 w-20 truncate uppercase tracking-wide">{cat.label}</span>
               <div className="flex-1 h-1.5 bg-surface-highest rounded-full overflow-hidden">
                 <div
                   className={cn('h-full rounded-full transition-all duration-500', cat.type === 'essential' ? 'bg-primary' : 'bg-tertiary-container')}
                   style={{ width: `${pct}%` }}
                 />
               </div>
-              <span className="text-[10px] font-bold text-primary w-14 text-right">₹{(cat.spent / 1000).toFixed(1)}K</span>
+              <span className="text-[11px] font-bold text-primary w-14 text-right">₹{(cat.spent / 1000).toFixed(1)}K</span>
             </div>
           )
         })}

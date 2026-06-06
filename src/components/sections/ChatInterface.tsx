@@ -117,6 +117,8 @@ export default function ChatInterface({ embedded = false }: { embedded?: boolean
                   className="flex-1 bg-white/5 border border-white/15 focus:outline-none focus:border-tertiary-container/70 rounded-xl px-4 py-2.5 text-xs text-white placeholder-white/40 transition"
                 />
                 <button
+                  type="button"
+                  aria-label="Send message"
                   onClick={() => sendMessage(inputValue)}
                   className="p-2.5 bg-tertiary-container text-primary rounded-xl hover:bg-amber-400 transition flex items-center justify-center shrink-0"
                 >

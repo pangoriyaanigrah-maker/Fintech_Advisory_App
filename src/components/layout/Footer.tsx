@@ -25,7 +25,7 @@ export default function Footer() {
         <div className="space-y-3">
           <h5 className="text-xs font-bold uppercase tracking-widest text-tertiary-container">Sanctuary Sections</h5>
           <div className="flex flex-col space-y-2 text-xs text-white/75">
-            <a href="/#portfolio" className="hover:text-amber-300">Portfolio Hub</a>
+            <Link href="/#portfolio" className="hover:text-amber-300">Portfolio Hub</Link>
             <Link href="/dashboard" className="hover:text-amber-300">Financial Dashboard</Link>
             <Link href="/budgeting" className="hover:text-amber-300">Budgeting & Spending</Link>
             <Link href="/goals" className="hover:text-amber-300">Goals & Wealth Planning</Link>

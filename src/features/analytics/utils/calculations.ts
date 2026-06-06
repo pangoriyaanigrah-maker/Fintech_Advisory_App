@@ -10,10 +10,20 @@ export function getTotalNonEssential(snapshot: MonthlySnapshot): number {
 }
 
 export function getMonthOverMonthChange(current: MonthlySnapshot, previous: MonthlySnapshot): number {
+  if (previous.totalExpenses <= 0) return 0
   return Math.round(((current.totalExpenses - previous.totalExpenses) / previous.totalExpenses) * 100)
 }
 
 export function computeHealthScore(current: MonthlySnapshot, previous: MonthlySnapshot): FinancialHealthScore {
+  // No income logged yet → nothing to score. Return a neutral, empty score.
+  if (current.income <= 0) {
+    return {
+      overall: 0,
+      label: 'Needs Attention',
+      breakdown: { savingsEfficiency: 0, budgetAdherence: 0, expenseRatio: 0, monthlyTrend: 0 },
+    }
+  }
+
   const budgetProgress = computeBudgetProgress(DEFAULT_BUDGETS, current)
   const overBudgetCount = budgetProgress.filter(b => b.isOverBudget).length
   const essentialRatio = getTotalEssential(current) / current.income
@@ -36,7 +46,7 @@ export function generateInsights(current: MonthlySnapshot, previous: MonthlySnap
 
   const diningNow = current.categories.find(c => c.category === 'dining')?.spent ?? 0
   const diningPrev = previous.categories.find(c => c.category === 'dining')?.spent ?? 0
-  if (diningNow > diningPrev) {
+  if (diningPrev > 0 && diningNow > diningPrev) {
     const pct = Math.round(((diningNow - diningPrev) / diningPrev) * 100)
     insights.push({ id: 'dining-up', message: `Dining out increased ₹${(diningNow - diningPrev).toLocaleString('en-IN')} (+${pct}%) compared to last month`, severity: 'warning', category: 'dining' })
   }
@@ -57,8 +67,8 @@ export function generateInsights(current: MonthlySnapshot, previous: MonthlySnap
     insights.push({ id: 'spending-down', message: `Spending dropped ${Math.abs(momChange)}% vs last month — great financial discipline!`, severity: 'success' })
   }
 
-  const essentialPct = Math.round((getTotalEssential(current) / current.income) * 100)
-  if (essentialPct <= 55) {
+  const essentialPct = current.income > 0 ? Math.round((getTotalEssential(current) / current.income) * 100) : 0
+  if (current.income > 0 && essentialPct <= 55) {
     insights.push({ id: 'essential-good', message: `Essential spending is only ${essentialPct}% of income — strong financial foundation`, severity: 'success' })
   }
 

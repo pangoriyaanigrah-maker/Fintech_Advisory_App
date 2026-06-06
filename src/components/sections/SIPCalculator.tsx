@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Calculator, Sparkles } from 'lucide-react';
 import { useSIPCalculator } from '@/hooks/useSIPCalculator';
 import { Container } from '@/components/layout/container';
@@ -12,6 +12,8 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
   const { amount, tenure, rate, setAmount, setTenure, setRate, result } = useSIPCalculator();
 
   const { futureValue, totalInvested, wealthGained, steps } = result;
+
+  const [analysis, setAnalysis] = useState<string | null>(null);
 
   const svgPaths = useMemo(() => {
     const paddingLeft = 45;
@@ -58,17 +60,17 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
   function handleAnalyze() {
     const p = Math.round(amount).toLocaleString('en-IN');
     const total = `₹${Math.round(futureValue).toLocaleString('en-IN')}`;
-    alert(
-      `Aarya Investment projection confirms a structural wealth accumulation of ${total} over ${tenure} years, on a regular Direct monthly contribution pledge of ₹${p}. Compounding optimization complete!`
+    setAnalysis(
+      `Projection confirmed: a structural wealth accumulation of ${total} over ${tenure} years, on a regular Direct monthly pledge of ₹${p}.`
     );
   }
 
   const innerContent = (
     <>
       <SectionHeading
-        eyebrow="PASSIVE WELLNESS TOOLS"
-        title="Visualize Your Compound Growth Strategy"
-        description="Control investment weights, rates, and time matrices to project active capital compounding gains directly."
+        eyebrow="Investment tools"
+        title="See how your SIP compounds over time"
+        description="Adjust your monthly amount, time horizon, and expected return to project how your investment grows."
         align="center"
         className="mb-12"
       />
@@ -86,10 +88,10 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
                   </div>
                   <div>
                     <h4 className="font-serif text-lg font-bold text-primary">
-                      Prosperity Flow Projection
+                      Projected growth
                     </h4>
-                    <p className="text-[9px] text-[#735c00] font-bold uppercase tracking-widest">
-                      Active SIP Compounding Graph
+                    <p className="text-[11px] text-[#735c00] font-bold uppercase tracking-widest">
+                      Monthly SIP, compounded
                     </p>
                   </div>
                 </div>
@@ -100,7 +102,12 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
 
               {/* SVG chart */}
               <div className="h-[230px] w-full relative">
-                <svg viewBox="0 0 500 200" className="w-full h-full overflow-visible">
+                <svg
+                  viewBox="0 0 500 200"
+                  className="w-full h-full overflow-visible"
+                  role="img"
+                  aria-label={`Projected portfolio growth reaching ₹${Math.round(futureValue).toLocaleString('en-IN')} over ${tenure} years at ${rate}% annual return`}
+                >
                   <defs>
                     <linearGradient id="wealthGrad" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#cca72f" stopOpacity="0.3" />
@@ -160,7 +167,7 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
               {/* Metrics */}
               <div className="grid grid-cols-2 gap-4 border-t border-primary/5 pt-4 text-left">
                 <div>
-                  <span className="text-[10px] text-on-surface/80 font-bold uppercase tracking-wider block">
+                  <span className="text-[11px] text-on-surface/80 font-bold uppercase tracking-wider block">
                     Total Capital Invested
                   </span>
                   <p className="text-lg font-extrabold text-primary mt-1">
@@ -168,8 +175,8 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
                   </p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-on-surface/80 font-bold uppercase tracking-wider block">
-                    Est. Compound Interest Gained
+                  <span className="text-[11px] text-on-surface/80 font-bold uppercase tracking-wider block">
+                    Est. Returns Gained
                   </span>
                   <p className="text-lg font-extrabold text-tertiary mt-1">
                     ₹{Math.round(wealthGained).toLocaleString('en-IN')}
@@ -187,7 +194,7 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <label className="font-sans text-sm font-bold text-primary flex items-center gap-1.5">
-                  Monthly Pledge Investment
+                  Monthly Investment
                 </label>
                 <span className="font-extrabold text-[#003527] text-lg">
                   ₹{amount.toLocaleString('en-IN')}
@@ -202,7 +209,7 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
                 onChange={(e) => setAmount(Number(e.target.value))}
                 className="w-full h-1.5 bg-surface-highest rounded-lg appearance-none cursor-pointer accent-primary"
               />
-              <div className="flex justify-between text-[10px] text-on-surface/50 font-bold uppercase tracking-widest">
+              <div className="flex justify-between text-[11px] text-on-surface/65 font-bold uppercase tracking-widest">
                 <span>₹5,000</span>
                 <span>₹100,000</span>
                 <span>₹200,000</span>
@@ -213,7 +220,7 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <label className="font-sans text-sm font-bold text-primary">
-                  Allocation Horizon
+                  Time Horizon
                 </label>
                 <span className="font-extrabold text-[#003527] text-lg">{tenure} Years</span>
               </div>
@@ -226,7 +233,7 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
                 onChange={(e) => setTenure(Number(e.target.value))}
                 className="w-full h-1.5 bg-surface-highest rounded-lg appearance-none cursor-pointer accent-[#cca72f]"
               />
-              <div className="flex justify-between text-[10px] text-on-surface/50 font-bold uppercase tracking-widest">
+              <div className="flex justify-between text-[11px] text-on-surface/65 font-bold uppercase tracking-widest">
                 <span>1 Year</span>
                 <span>20 Years</span>
                 <span>40 Years</span>
@@ -237,7 +244,7 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <label className="font-sans text-sm font-bold text-[#003527]">
-                  Expected Annual Return Yield
+                  Expected Annual Return
                 </label>
                 <span className="font-extrabold text-[#003527] text-lg">{rate}%</span>
               </div>
@@ -250,7 +257,7 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
                 onChange={(e) => setRate(Number(e.target.value))}
                 className="w-full h-1.5 bg-surface-highest rounded-lg appearance-none cursor-pointer accent-primary"
               />
-              <div className="flex justify-between text-[10px] text-on-surface/50 font-bold uppercase tracking-widest">
+              <div className="flex justify-between text-[11px] text-on-surface/65 font-bold uppercase tracking-widest">
                 <span>5% (Debt)</span>
                 <span>12% (Balanced)</span>
                 <span>25% (Maximum)</span>
@@ -260,15 +267,15 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
             {/* Projected value banner */}
             <div className="p-6 bg-surface-lowest rounded-3xl border border-primary/5 shadow-sm space-y-1 relative overflow-hidden">
               <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-tertiary-container/5 rounded-full blur-xl pointer-events-none" />
-              <p className="text-[10px] text-on-surface/60 font-bold uppercase tracking-wider block">
+              <p className="text-[11px] text-on-surface/60 font-bold uppercase tracking-wider block">
                 Estimated Future Portfolio Value
               </p>
               <h3 className="font-serif text-3xl font-extrabold text-primary tracking-tight mt-1.5">
                 ₹{Math.round(futureValue).toLocaleString('en-IN')}
               </h3>
-              <p className="text-[9px] text-[#735c00] font-semibold tracking-wider uppercase flex items-center gap-1 pt-1">
+              <p className="text-[11px] text-[#735c00] font-semibold tracking-wider uppercase flex items-center gap-1 pt-1">
                 <Sparkles className="w-3.5 h-3.5 text-tertiary-container" />
-                Direct compounding advantage modeled dynamically.
+                Compounded monthly over your chosen time horizon.
               </p>
             </div>
 
@@ -278,8 +285,17 @@ export default function SIPCalculator({ embedded = false }: { embedded?: boolean
               size="lg"
               fullWidth
             >
-              Analyze Trajectory
+              See Projection
             </Button>
+
+            {analysis && (
+              <p
+                role="status"
+                className="text-xs text-primary font-semibold bg-primary/5 border border-primary/10 rounded-xl px-4 py-3 leading-relaxed"
+              >
+                {analysis}
+              </p>
+            )}
 
           </div>
 

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Bodoni_Moda, Hanken_Grotesk } from 'next/font/google';
 import './globals.css';
+import { Providers } from '@/components/providers';
 
 const bodoniModa = Bodoni_Moda({
   variable: '--font-bodoni',
@@ -31,7 +32,7 @@ export default function RootLayout({
       className={`${bodoniModa.variable} ${hankenGrotesk.variable} scroll-smooth`}
     >
       <body className="min-h-screen bg-surface text-on-surface font-sans selection:bg-tertiary-container/30 overflow-x-hidden antialiased flex flex-col transition-colors duration-300">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

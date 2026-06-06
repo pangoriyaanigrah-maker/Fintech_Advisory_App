@@ -6,7 +6,7 @@ import { resolveAnswer } from '@/lib/data/chat'
 const INITIAL_MESSAGE: ChatMessage = {
   id: 'initial',
   sender: 'aura',
-  text: 'Welcome back, Ananya. I have indexed your current Indian portfolio balance. How can I assist you with your wealth zen today?',
+  text: "Hi Ananya — I'm Aura, your financial assistant. Ask me about SIPs, taxes, or your goals.",
 }
 
 interface ChatStore {
@@ -63,7 +63,7 @@ const useChatStore = create<ChatStore>()(
           {
             id: `cleared-${Date.now()}`,
             sender: 'aura',
-            text: 'Chat history flushed. Ask me anything about direct mutual investments, ELSS taxes, or goals!',
+            text: 'Chat cleared. Ask me anything about SIPs, ELSS tax savings, or your goals.',
           },
         ]
         state.isTyping = false

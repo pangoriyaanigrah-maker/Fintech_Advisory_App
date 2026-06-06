@@ -16,7 +16,7 @@ const labelBg: Record<FinancialHealthScore['label'], string> = {
 
 function ScoreGauge({ score }: { score: number }) {
   return (
-    <svg viewBox="0 0 120 68" className="w-full max-w-[160px] mx-auto">
+    <svg viewBox="0 0 120 68" className="w-full max-w-[160px] mx-auto" role="img" aria-label={`Financial health score ${score} out of 100`}>
       {/* Track */}
       <path
         d="M 10 60 A 50 50 0 0 1 110 60"
@@ -45,7 +45,7 @@ function ScoreGauge({ score }: { score: number }) {
 function SubScore({ label, value }: { label: string; value: number }) {
   return (
     <div className="space-y-1">
-      <div className="flex justify-between text-[10px] font-bold text-on-surface/60 uppercase tracking-wider">
+      <div className="flex justify-between text-[11px] font-bold text-on-surface/60 uppercase tracking-wider">
         <span>{label}</span>
         <span className="text-primary">{value}/10</span>
       </div>
@@ -60,7 +60,7 @@ export function FinancialScoreCard({ score, className }: FinancialScoreCardProps
   return (
     <div className={cn('text-center space-y-4', className)}>
       <ScoreGauge score={score.overall} />
-      <span className={cn('inline-block text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full', labelBg[score.label])}>
+      <span className={cn('inline-block text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full', labelBg[score.label])}>
         {score.label}
       </span>
       <div className="space-y-2.5 text-left">

@@ -6,7 +6,7 @@ import type { FinancialInsight } from '@/types'
 const severityConfig = {
   warning: { icon: AlertTriangle, bg: 'bg-tertiary-container/15 border-tertiary-container/30', text: 'text-tertiary', iconColor: 'text-tertiary' },
   success: { icon: CheckCircle2, bg: 'bg-primary/5 border-primary/15', text: 'text-primary', iconColor: 'text-primary' },
-  info:    { icon: Info, bg: 'bg-surface-highest border-surface-highest', text: 'text-on-surface/70', iconColor: 'text-on-surface/50' },
+  info:    { icon: Info, bg: 'bg-surface-highest border-surface-highest', text: 'text-on-surface/70', iconColor: 'text-on-surface/65' },
   tip:     { icon: Lightbulb, bg: 'bg-tertiary-container/10 border-tertiary-container/20', text: 'text-tertiary', iconColor: 'text-tertiary-container' },
 } as const
 

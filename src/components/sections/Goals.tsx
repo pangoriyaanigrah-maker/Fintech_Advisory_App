@@ -1,8 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { Building, Compass, Landmark, Sparkles } from 'lucide-react';
 import type { GoalId } from '@/types';
-import { goalsDictionary } from '@/lib/data/goals';
 import { useActiveModal, useModalPayload, useOpenModal, useCloseModal } from '@/stores/modal-store';
 import { useGoal, useSetOptimizationCoefficient, useLockAllocation } from '@/stores/goal-store';
 import { Container } from '@/components/layout/container';
@@ -58,17 +58,16 @@ function GoalModalContent({ goalId }: { goalId: GoalId }) {
   const setOptimizationCoefficient = useSetOptimizationCoefficient();
   const lockAllocation = useLockAllocation();
   const closeModal = useCloseModal();
+  const [locked, setLocked] = useState(false);
 
   if (!goalState) return null;
 
   const { data, optimizationCoefficient, dynamicSaved } = goalState;
 
   function applyGoalOptimization() {
-    alert(
-      `Optimization coefficient locked at ${optimizationCoefficient}% path convergence factor. Strategies updated inside primary cache database!`
-    );
     lockAllocation(goalId);
-    closeModal();
+    setLocked(true);
+    window.setTimeout(closeModal, 1400);
   }
 
   return (
@@ -90,13 +89,13 @@ function GoalModalContent({ goalId }: { goalId: GoalId }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         <div className="p-4 bg-surface-low rounded-xl">
           <p className="text-[9px] text-on-surface/50 font-bold uppercase tracking-wider">
-            Target Valuation Milestone
+            Target
           </p>
           <p className="text-xl font-extrabold text-primary mt-1">{data.target}</p>
         </div>
         <div className="p-4 bg-surface-low rounded-xl">
           <p className="text-[9px] text-on-surface/50 font-bold uppercase tracking-wider">
-            Current Saved Balance
+            Saved so far
           </p>
           <p className="text-xl font-extrabold text-primary mt-1">
             {dynamicSaved || data.saved}
@@ -108,7 +107,7 @@ function GoalModalContent({ goalId }: { goalId: GoalId }) {
       <div className="space-y-4 mb-6">
         <div className="flex justify-between items-center">
           <label className="font-sans text-sm font-bold text-primary">
-            Simulation Optimization Coefficient
+            Optimization level
           </label>
           <span className="font-extrabold text-primary-container text-sm">
             {optimizationCoefficient}%
@@ -133,12 +132,22 @@ function GoalModalContent({ goalId }: { goalId: GoalId }) {
       <div className="p-5 bg-[#003527]/5 rounded-2xl border border-primary/10 relative space-y-2 mt-4">
         <p className="text-xs text-primary font-bold uppercase tracking-wider flex items-center gap-1.5">
           <Sparkles className="w-4 h-4 text-tertiary" />
-          Aarya Actionable Insight Recommendation
+          Recommendation
         </p>
         <p className="text-xs text-on-surface/85 leading-relaxed">
           {data.recommendation}
         </p>
       </div>
+
+      {locked && (
+        <div
+          role="status"
+          className="mt-4 flex items-center gap-2 text-xs font-bold text-primary bg-primary/5 border border-primary/15 rounded-xl px-4 py-3"
+        >
+          <Sparkles className="w-4 h-4 text-tertiary shrink-0" />
+          Saved at {optimizationCoefficient}% — updating your plan…
+        </div>
+      )}
 
       <div className="pt-6 flex gap-3">
         <Button
@@ -146,8 +155,9 @@ function GoalModalContent({ goalId }: { goalId: GoalId }) {
           variant="primary"
           fullWidth
           className="py-3.5"
+          disabled={locked}
         >
-          Lock Allocation Path
+          {locked ? 'Saved' : 'Save plan'}
         </Button>
         <Button
           onClick={closeModal}
@@ -178,29 +188,24 @@ export default function Goals({ embedded = false }: { embedded?: boolean }) {
     <>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
         <SectionHeading
-          eyebrow="MILESTONE PLANNING"
-          title="Architect Your Sanctuary Goals"
+          eyebrow="Goals"
+          title="Plan your goals"
           spacing="sm"
         />
-        <button
-          onClick={() =>
-            alert(
-              'Click on any card below to launch interactive optimization metrics and progress sliders.'
-            )
-          }
-          className="font-sans text-xs font-bold uppercase tracking-wider text-primary border-b border-primary/30 pb-0.5 hover:border-primary transition-all"
-        >
-          How modeling tools work
-        </button>
+        <p className="font-sans text-xs font-semibold text-on-surface/60 max-w-xs sm:text-right">
+          Tap any sanctuary card to open its interactive optimization metrics and progress slider.
+        </p>
       </div>
 
       {/* Goal cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {goalCards.map((card) => (
-          <div
+          <button
             key={card.id}
+            type="button"
             onClick={() => openGoalModal(card.id)}
-            className="group relative overflow-hidden rounded-[2rem] aspect-[4/5] shadow-xl hover:shadow-[0_20px_50px_rgba(0,53,39,0.15)] transition-all duration-500 cursor-pointer border border-primary/5"
+            aria-label={`Open ${goalTitles[card.id]} optimization`}
+            className="group relative w-full text-left overflow-hidden rounded-[2rem] aspect-[4/5] shadow-xl hover:shadow-[0_20px_50px_rgba(0,53,39,0.15)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 transition-all duration-500 cursor-pointer border border-primary/5"
           >
             <img
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -224,14 +229,14 @@ export default function Goals({ embedded = false }: { embedded?: boolean }) {
                   />
                 </div>
                 <div className="flex justify-between items-center text-xs font-semibold">
-                  <span className="text-white/90">Path Progress: {card.progress}%</span>
+                  <span className="text-white/90">Progress: {card.progress}%</span>
                   <span className="flex items-center gap-1 text-tertiary-container">
-                    Optimize Path &rarr;
+                    Adjust &rarr;
                   </span>
                 </div>
               </div>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 

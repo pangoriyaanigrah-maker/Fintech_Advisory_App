@@ -45,7 +45,7 @@ const useGoalStore = create<GoalStore>()(
       }),
 
     // Placeholder for future API call
-    lockAllocation: (_id) => {
+    lockAllocation: () => {
       // no-op
     },
   }))
